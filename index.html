@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>A viagem do capitão</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Big+Shoulders+Display:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    --bg: #E4ECF0; --surface: #F6F9FA; --ink: #10304A; --muted: #4C6577; --line: #B5C7D2;
+    --navy: #1B4F77; --sun: #E3A50B; --ok: #1E7656; --ok-soft: #DCEFE6; --bad: #AF3329; --bad-soft: #F6E1DE;
+    --focus: #E3A50B;
+    --display: "Big Shoulders Display", "Arial Narrow", "Roboto Condensed", Impact, sans-serif;
+    --body: "Atkinson Hyperlegible", "Segoe UI", Verdana, system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0C1C29; --surface: #132838; --ink: #E3ECF1; --muted: #9BB1C0; --line: #2B4558;
+      --navy: #79AEDB; --sun: #F0B83A; --ok: #5CC59A; --ok-soft: #173B30; --bad: #E87467; --bad-soft: #43231F;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0C1C29; --surface: #132838; --ink: #E3ECF1; --muted: #9BB1C0; --line: #2B4558;
+    --navy: #79AEDB; --sun: #F0B83A; --ok: #5CC59A; --ok-soft: #173B30; --bad: #E87467; --bad-soft: #43231F;
+  }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  *, *::before, *::after { box-sizing: inherit; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 1.125rem; line-height: 1.55; }
+  img, svg { max-width: 100%; }
+  button, input, textarea { font: inherit; color: inherit; }
+  :focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+  a { color: var(--navy); }
+
+  .bar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; max-width: 880px; margin: 0 auto; padding: 1.1rem 1.25rem 0; flex-wrap: wrap; }
+  .brand { font-family: var(--display); font-weight: 800; font-size: 1.35rem; letter-spacing: .02em; color: var(--navy); }
+  .tabs { display: none; gap: .25rem; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: .2rem; }
+  .tabs.on { display: flex; }
+  .tabs button { border: 0; background: transparent; padding: .4rem .9rem; border-radius: 999px; cursor: pointer; font-size: .95rem; }
+  .tabs button[aria-pressed="true"] { background: var(--navy); color: var(--surface); }
+
+  .stages { max-width: 880px; margin: 0 auto; padding: .9rem 1.25rem 0; }
+  .stages ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .4rem; }
+  .stages button { width: 100%; text-align: left; background: transparent; border: 0; border-top: 4px solid var(--line); padding: .45rem .2rem 0; cursor: pointer; color: var(--muted); font-size: .92rem; line-height: 1.3; }
+  .stages button .n { display: block; font-family: var(--display); font-weight: 800; font-size: 1.15rem; color: inherit; }
+  .stages button.done { border-top-color: var(--navy); }
+  .stages button[aria-current="step"] { border-top-color: var(--sun); color: var(--ink); font-weight: 700; }
+  @media (max-width: 560px) { .stages .t { display: none; } }
+
+  main { max-width: 880px; margin: 0 auto; padding: 1.25rem 1.25rem 4rem; }
+  h1 { font-family: var(--display); font-weight: 800; font-size: clamp(3rem, 9vw, 5.6rem); line-height: .92; letter-spacing: .005em; margin: 1.5rem 0 1.25rem; }
+  h2 { font-family: var(--display); font-weight: 700; font-size: clamp(2rem, 5vw, 3rem); line-height: 1.02; margin: .4rem 0 1.25rem; }
+  h3 { font-size: 1.15rem; margin: 0 0 .35rem; }
+  p { margin: 0 0 1rem; max-width: 64ch; }
+  .lead { font-size: 1.25rem; }
+  .muted { color: var(--muted); }
+
+  .route { width: 100%; height: auto; display: block; margin: .5rem 0 1rem; }
+  .route .wave { stroke: var(--line); } .route .path { stroke: var(--navy); }
+  .route .stop { fill: var(--surface); stroke: var(--navy); } .route .stop.done { fill: var(--navy); }
+  .route .port { fill: var(--sun); } .route .hull { fill: var(--ink); } .route .sail { fill: var(--surface); stroke: var(--ink); }
+  .route text { fill: var(--muted); font-family: var(--body); font-size: 13px; }
+  .ship { transition: transform .6s cubic-bezier(.4,.1,.2,1); }
+  @media (prefers-reduced-motion: reduce) { .ship { transition: none; } }
+
+  .btn { display: inline-flex; align-items: center; gap: .5rem; background: var(--navy); color: var(--surface); border: 0; border-radius: 6px; padding: .8rem 1.4rem; font-weight: 700; font-size: 1.1rem; cursor: pointer; }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  .btn.ghost { background: transparent; color: var(--navy); border: 2px solid var(--navy); }
+  .btn.danger { background: transparent; color: var(--bad); border: 2px solid var(--bad); }
+  .actions { margin-top: 1.5rem; display: flex; gap: .75rem; flex-wrap: wrap; align-items: center; }
+
+  .legend { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .6rem 1.5rem; margin: 1.5rem 0 2rem; padding: 0; list-style: none; }
+  .legend li { display: flex; gap: .75rem; align-items: center; }
+  @media (max-width: 560px) { .legend { grid-template-columns: 1fr; } }
+  .flag { flex: 0 0 auto; width: 44px; height: 32px; border-radius: 2px; box-shadow: 0 0 0 1px rgba(0,0,0,.18); }
+
+  .step { color: var(--muted); font-size: 1rem; margin: 0; }
+  .ask { color: var(--muted); margin: -.6rem 0 1.1rem; }
+  .options { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+  @media (max-width: 640px) { .options { grid-template-columns: 1fr; } }
+  .opt { display: flex; align-items: center; gap: .9rem; text-align: left; background: var(--surface); border: 2px solid var(--line); border-radius: 8px; padding: .85rem 1rem; cursor: pointer; min-height: 4.2rem; font-size: 1.05rem; }
+  .opt:hover:not(:disabled) { border-color: var(--navy); }
+  .opt:disabled { cursor: default; }
+  .opt.picked { border-color: var(--navy); box-shadow: inset 0 0 0 2px var(--navy); }
+  .opt.right { border-color: var(--ok); background: var(--ok-soft); }
+  .opt.wrong { border-color: var(--bad); background: var(--bad-soft); }
+  .opt.faded { opacity: .55; }
+  .opt .tag { margin-left: auto; font-size: .85rem; font-weight: 700; white-space: nowrap; }
+  .opt.right .tag { color: var(--ok); } .opt.wrong .tag { color: var(--bad); }
+  .feedback { margin-top: 1.5rem; border-left: 5px solid var(--sun); background: var(--surface); padding: 1.1rem 1.25rem; border-radius: 0 8px 8px 0; }
+  .feedback p:last-child { margin-bottom: 0; }
+  .verdict { font-weight: 700; font-size: 1.2rem; margin-bottom: .6rem; }
+  .verdict.ok { color: var(--ok); } .verdict.no { color: var(--bad); }
+
+  .score { font-family: var(--display); font-weight: 800; font-size: clamp(2.4rem, 7vw, 4rem); line-height: 1; margin: 1rem 0 2.5rem; }
+  .lessons { list-style: none; padding: 0; margin: 0 0 2rem; display: grid; gap: 1rem; }
+  .lessons li { display: flex; gap: 1rem; align-items: flex-start; }
+  .lessons p { margin: 0; }
+  .boxed { background: var(--surface); border: 2px solid var(--navy); border-radius: 8px; padding: 1.25rem 1.4rem; }
+  .boxed h2 { margin-top: 0; }
+  .crew { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin: 1rem 0; }
+  .crew div { border-top: 3px solid var(--sun); padding-top: .6rem; }
+  .note { font-size: .95rem; color: var(--muted); margin-top: 1.75rem; }
+
+  /* Stage 2 */
+  .reading { border-left: 5px solid var(--navy); padding: .2rem 0 .2rem 1rem; margin: 0 0 2rem; }
+  .pollq { margin: 0 0 2rem; }
+  .pollq h3 { font-size: 1.3rem; margin-bottom: .8rem; }
+  .reveal-name { font-family: var(--display); font-weight: 800; font-size: clamp(2.4rem, 8vw, 4.6rem); line-height: 1; margin: .6rem 0 1rem; color: var(--muted); }
+  .reveal-name b { color: var(--sun); font-weight: 800; }
+  .acronym { font-family: var(--display); font-weight: 800; font-size: clamp(3rem, 10vw, 6rem); line-height: 1; letter-spacing: .12em; color: var(--ink); margin: 0 0 1rem; }
+
+  /* Stage 3 */
+  .seq { list-style: none; margin: 0 0 1.5rem; padding: 0; display: grid; gap: .6rem; counter-reset: s; }
+  .slot { display: flex; align-items: center; gap: .8rem; min-height: 3.6rem; border: 2px dashed var(--line); border-radius: 8px; padding: .5rem .8rem; color: var(--muted); }
+  .slot .pos { font-family: var(--display); font-weight: 800; font-size: 1.6rem; width: 1.6rem; text-align: center; color: var(--muted); flex: 0 0 auto; }
+  .slot.filled { border-style: solid; background: var(--surface); color: var(--ink); }
+  .slot.good { border-color: var(--ok); background: var(--ok-soft); }
+  .slot.badpos { border-color: var(--bad); }
+  .slot .txt { flex: 1; }
+  .mini { display: inline-flex; gap: .25rem; flex: 0 0 auto; }
+  .mini button { width: 2.3rem; height: 2.3rem; border: 1px solid var(--line); background: var(--bg); border-radius: 6px; cursor: pointer; font-size: 1rem; line-height: 1; }
+  .mini button:disabled { opacity: .35; cursor: default; }
+  .pool { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: .6rem; margin: 0 0 1rem; padding: 0; list-style: none; }
+  .card { width: 100%; text-align: left; background: var(--surface); border: 2px solid var(--line); border-radius: 8px; padding: .8rem 1rem; cursor: pointer; font-size: 1.02rem; box-shadow: 0 2px 0 var(--line); }
+  .card:hover { border-color: var(--navy); }
+  .card:disabled { cursor: default; opacity: .6; }
+  .card:disabled:hover { border-color: var(--line); }
+  .yours { font-size: .9rem; color: var(--muted); }
+  .label-sm { font-size: .95rem; color: var(--muted); margin: 0 0 .5rem; }
+  .steps { list-style: none; margin: 0 0 2rem; padding: 0; display: grid; gap: 1rem; }
+  .steps li { display: grid; grid-template-columns: 2.4rem 1fr; gap: .2rem .9rem; border-top: 1px solid var(--line); padding-top: 1rem; }
+  .steps .num { font-family: var(--display); font-weight: 800; font-size: 2rem; line-height: 1; color: var(--sun); grid-row: span 3; }
+  .steps .name { font-weight: 700; font-size: 1.15rem; }
+  .steps .boat { color: var(--muted); font-size: 1rem; }
+  .steps .yours { font-size: .9rem; color: var(--muted); }
+  .cycle { width: 100%; max-width: 680px; height: auto; display: block; margin: 1rem auto 1.5rem; }
+  .cycle .ring { stroke: var(--navy); fill: none; }
+  .cycle .node { fill: var(--navy); }
+  .cycle .node.hot { fill: var(--sun); }
+  .cycle text { fill: var(--ink); font-family: var(--body); font-size: 15px; }
+  .cycle .center { fill: var(--muted); font-family: var(--display); font-weight: 800; font-size: 26px; }
+  .cycle .arrowhead { fill: var(--navy); }
+
+  /* Stage 4 */
+  .example { background: var(--surface); border-radius: 8px; padding: 1.1rem 1.25rem; margin: 0 0 2rem; border-top: 4px solid var(--navy); }
+  .example dl { display: grid; grid-template-columns: 9rem 1fr; gap: .5rem 1rem; margin: 0; }
+  .example dt { font-weight: 700; color: var(--muted); }
+  .example dd { margin: 0; }
+  .roteiro { border-top-color: var(--sun); }
+  a.btn { text-decoration: none; }
+  .url { word-break: break-all; }
+  @media (max-width: 600px) { .example dl { grid-template-columns: 1fr; } .example dd { margin-bottom: .4rem; } }
+  .field { margin: 0 0 1.3rem; }
+  .field label { display: block; font-weight: 700; margin-bottom: .2rem; }
+  .field .hint { display: block; font-size: .95rem; color: var(--muted); margin-bottom: .45rem; }
+  .field textarea { width: 100%; min-height: 4.8rem; resize: vertical; background: var(--surface); border: 2px solid var(--line); border-radius: 8px; padding: .7rem .8rem; line-height: 1.45; }
+  .field textarea.tall { min-height: 8rem; }
+  .field textarea.one { min-height: 3rem; }
+  .field textarea:focus { border-color: var(--navy); outline: none; box-shadow: 0 0 0 3px var(--sun); }
+  .err { color: var(--bad); font-weight: 700; }
+  .family { display: grid; gap: .3rem; margin: 1rem 0 1.4rem; }
+  .family div { font-family: var(--display); font-weight: 800; font-size: clamp(1.8rem, 6vw, 3rem); line-height: 1.05; color: var(--muted); }
+  .family b { color: var(--sun); }
+
+  /* Panel */
+  .panelnav { display: flex; gap: .5rem; flex-wrap: wrap; margin: 0 0 1.5rem; }
+  .panelnav a { padding: .35rem .8rem; border: 1px solid var(--line); border-radius: 999px; text-decoration: none; background: var(--surface); font-size: .95rem; }
+  .psec { border-top: 3px solid var(--navy); margin-top: 2.5rem; padding-top: 1rem; }
+  .summary { font-size: 1.2rem; }
+  .qblock { border-top: 1px solid var(--line); padding: 1.2rem 0; }
+  .qblock h3 { font-size: 1.1rem; }
+  .bars { display: grid; gap: .45rem; margin-top: .6rem; }
+  .barrow { display: grid; grid-template-columns: minmax(10rem, 20rem) 1fr 4.6rem; gap: .7rem; align-items: center; font-size: .95rem; }
+  .barrow.withflag { grid-template-columns: 34px minmax(9rem, 16rem) 1fr 4.6rem; }
+  .barrow .flag { width: 34px; height: 24px; }
+  .track { height: 14px; background: var(--bg); border-radius: 7px; overflow: hidden; }
+  .fill { height: 100%; background: var(--muted); border-radius: 7px; }
+  .barrow.expected .fill { background: var(--ok); }
+  .barrow.expected .label { font-weight: 700; }
+  .count { text-align: right; font-variant-numeric: tabular-nums; }
+  @media (max-width: 640px) {
+    .barrow, .barrow.withflag { grid-template-columns: 1fr 4.2rem; }
+    .barrow .flag { display: none; }
+    .barrow .track { grid-column: 1 / 3; grid-row: 2; }
+  }
+  .tablewrap { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; min-width: 520px; font-size: 1rem; }
+  th, td { text-align: left; padding: .55rem .6rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 700; }
+  .sub { background: var(--surface); border-radius: 8px; padding: 1rem 1.2rem; margin: 0 0 1rem; }
+  .sub h3 { margin-bottom: .6rem; }
+  .sub dl { display: grid; grid-template-columns: 8rem 1fr; gap: .35rem 1rem; margin: 0; font-size: 1rem; }
+  .sub dt { color: var(--muted); font-weight: 700; }
+  .sub dd { margin: 0; white-space: pre-wrap; }
+  @media (max-width: 600px) { .sub dl { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="brand">A viagem do capitão</div>
+  <div class="tabs" id="tabs" role="group" aria-label="Modo">
+    <button type="button" data-view="play" aria-pressed="true">Jogar</button>
+    <button type="button" data-view="panel" aria-pressed="false">Painel do professor</button>
+  </div>
+</div>
+<nav class="stages" id="stages" aria-label="Etapas"></nav>
+<main id="app" aria-live="polite"></main>
+
+<script>
+(function () {
+  "use strict";
+
+  // =================== Content ===================
+  var CITY = "Porto Sereno";
+  var MURAL_URL = "https://padlet.com/pedroaurelioabreu/a-familia-lima-machado-a-tripulacao-da-larissa-s024dp5qsj5oiao6viu3";
+  var SBC_URL = "https://books-sol.sbc.org.br/index.php/sbc/catalog/download/190/886/1838?inline=1";
+  var STAGES = [
+    { id: "1", t: "A biblioteca do capitão" },
+    { id: "2", t: "O capitão no texto" },
+    { id: "3", t: "A tempestade" },
+    { id: "3.1", t: "O ciclo do agente" },
+    { id: "4", t: "A família Lima Machado" }
+  ];
+
+  // Stage 1
+  var OPTIONS = {
+    A: "Resolve com o que leu na biblioteca",
+    B: "Resolve, mas a informação pode estar desatualizada",
+    C: "Não resolve: a informação é nova",
+    D: "Não resolve: precisa agir, não só saber"
+  };
+  var KEYS = ["A", "B", "C", "D"];
+  var QUESTIONS = [
+    { id: "q1", text: "Em que ano foi fundada " + CITY + ", a cidade de destino?", answer: "A",
+      boat: "A data de fundação estava nos livros que ele leu antes de partir, e ela não muda com o tempo. Ele resolve de memória." },
+    { id: "q2", text: "Qual é a previsão do tempo para amanhã de manhã?", answer: "C",
+      boat: "A previsão de amanhã não existia quando o barco partiu. Nenhum livro que ele leu fala dela." },
+    { id: "q3", text: "Quem é o prefeito atual de " + CITY + "?", answer: "B",
+      boat: "O capitão leu o nome do prefeito da época da partida e responde com segurança. Mas pode ter havido eleição desde então." },
+    { id: "q4", text: "O barco faz 20 km por hora. Quanto tempo leva para percorrer os 300 km que faltam?", answer: "A",
+      boat: "Ele aprendeu a fazer a conta nos livros: 300 ÷ 20 = 15 horas. Não depende de nenhuma notícia nova." },
+    { id: "q5", text: "Houve algum conflito político em " + CITY + " na última semana?", answer: "C",
+      boat: "A última semana aconteceu muito depois da partida. Nada do que ele leu fala disso." },
+    { id: "q6", text: "Navegar até " + CITY + " pelo melhor caminho possível.", answer: "D",
+      boat: "Ele leu os manuais de navegação: sabe como fazer. Mas saber não move o barco. Alguém precisa girar o leme, e alguém precisa ver as ondas de agora.",
+      notes: { C: "Você notou algo importante: as condições do mar agora também são informação nova. Mas o problema central é outro: mesmo sabendo tudo, o capitão não move o barco sozinho." } }
+  ];
+
+  // Stage 2
+  var POLL = [
+    { id: "p1", text: "No texto da SBC, quem é o capitão Luís?", answer: "A",
+      options: { A: "O LLM, o \u201ccérebro\u201d do agente", B: "Os sensores", C: "Os atuadores", D: "O usuário que faz o pedido" },
+      why: "O texto descreve o LLM como o controlador central, o \u201ccérebro\u201d que orquestra os outros módulos. É o papel do Luís: pensar e decidir." },
+    { id: "p2", text: "No barco, quem é o sensor?", answer: "B",
+      options: { A: "Luís, o capitão", B: "O vigia", C: "O timoneiro", D: "A biblioteca" },
+      why: "O sensor percebe o ambiente. No barco, quem observa o tempo e o mar é o vigia." },
+    { id: "p3", text: "No barco, quem é o atuador?", answer: "C",
+      options: { A: "Luís, o capitão", B: "O vigia", C: "O timoneiro", D: "A biblioteca" },
+      why: "O atuador age sobre o ambiente. No barco, quem gira o leme é o timoneiro." }
+  ];
+
+  // Stage 3
+  var STEPS = {
+    P: { name: "Percepção", what: "O agente recebe informação do ambiente: o pedido do usuário, um dado novo, o resultado de uma ferramenta." },
+    M: { name: "Memória e contexto", what: "O agente junta o que percebeu com o que já sabe: o histórico da conversa, documentos, o que aconteceu antes." },
+    R: { name: "Planejamento e raciocínio", what: "O LLM pesa as opções e decide o próximo passo." },
+    F: { name: "Uso de ferramentas", what: "O agente age por meio de ferramentas: uma busca, uma API, um programa, um sistema." },
+    O: { name: "Observação e avaliação", what: "O agente observa o resultado da ação e confere se chegou mais perto do objetivo." }
+  };
+  var CARDS = {
+    P: "O vigia avista nuvens escuras a leste, e o vento muda de direção.",
+    M: "Luís consulta o diário de bordo: o porto seguro mais próximo ficou a duas horas, ao norte.",
+    R: "Luís compara as rotas possíveis e decide desviar para o norte, rumo ao porto.",
+    F: "Luís manda o timoneiro virar 30 graus para o norte.",
+    O: "O vigia informa que as nuvens estão ficando para trás, e Luís confere se o novo rumo funcionou.",
+    X: "Luís lembra da previsão do tempo que leu antes de partir."
+  };
+  var CANON = ["P", "M", "R", "F", "O"];
+  var ALT = ["M", "P", "R", "F", "O"];
+  var CYCLE_OPTS = ["P", "M", "R", "F", "O"];
+  var CYCLE_ANSWER = "R";
+  var CYCLE_NOTES = {
+    P: "Quase. O aviso do vigia já é a nova percepção. O que falta agora é decidir de novo.",
+    M: "Consultar o diário ajuda, mas não basta: Luís precisa de um plano novo.",
+    R: "Com a nova informação, Luís replaneja: talvez outro porto, talvez reduzir a velocidade.",
+    F: "Mandar o timoneiro agir sem replanejar repetiria a manobra que não funcionou.",
+    O: "A avaliação já aconteceu: foi ela que mostrou o problema. Agora é preciso replanejar."
+  };
+
+  // Stage 4
+  var FIELDS = [
+    { k: "prof", short: "Profissão", label: "Profissão da Larissa", hint: "Escolha uma profissão em que ela planeja e decide, mas outras pessoas percebem e agem. Algumas ideias: administradora de hospital, administradora de eventos.", one: true },
+    { k: "nao", short: "Não consegue sozinha", label: "O que a Larissa não consegue fazer sozinha?", hint: "Só com o que leu e planejando, o que fica fora do alcance dela?" },
+    { k: "sens", label: "Sensores", hint: "Quem ou o que observa o ambiente de trabalho por ela?" },
+    { k: "atu", label: "Atuadores", hint: "Quem ou o que age por ela?" },
+    { k: "mem", label: "Memória", hint: "Onde ela guarda o que já aconteceu?" },
+    { k: "ciclo", label: "Um ciclo", hint: "Conte um imprevisto no trabalho dela e como a tripulação resolve, passando pelas cinco etapas.", tall: true }
+  ];
+
+  // =================== Helpers ===================
+  function flag(key, cls) {
+    var c = ' class="flag' + (cls ? " " + cls : "") + '"';
+    if (key === "A") return '<svg' + c + ' viewBox="0 0 44 32" aria-hidden="true"><rect width="44" height="32" fill="#1D4E89"/><rect y="6.4" width="44" height="19.2" fill="#fff"/><rect y="12.8" width="44" height="6.4" fill="#C8302A"/></svg>';
+    if (key === "B") return '<svg' + c + ' viewBox="0 0 44 32" aria-hidden="true"><rect width="44" height="32" fill="#F2BE1A"/><path d="M0 32 L44 0 L44 32 Z" fill="#1D4E89"/></svg>';
+    if (key === "C") {
+      var s = '<svg' + c + ' viewBox="0 0 44 32" aria-hidden="true"><rect width="44" height="32" fill="#fff"/>';
+      for (var r = 0; r < 4; r++) for (var k = 0; k < 4; k++) if ((r + k) % 2 === 0) s += '<rect x="' + (k * 11) + '" y="' + (r * 8) + '" width="11" height="8" fill="#1D4E89"/>';
+      return s + "</svg>";
+    }
+    return '<svg' + c + ' viewBox="0 0 44 32" aria-hidden="true"><rect width="44" height="32" fill="#C8302A"/><rect x="13" y="9" width="18" height="14" fill="#fff"/></svg>';
+  }
+  function route(progress) {
+    var n = QUESTIONS.length, x0 = 40, x1 = 760, y = 54, step = (x1 - x0) / n;
+    var s = '<svg class="route" viewBox="0 0 800 100" role="img" aria-label="Viagem: ' + progress + " de " + n + ' problemas resolvidos">';
+    s += '<path class="wave" d="M0 96 q20 -8 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0" fill="none" stroke-width="2"/>';
+    s += '<line class="path" x1="' + x0 + '" y1="' + y + '" x2="' + x1 + '" y2="' + y + '" stroke-width="2" stroke-dasharray="6 6"/>';
+    for (var i = 1; i < n; i++) s += '<circle class="stop' + (i <= progress ? " done" : "") + '" cx="' + (x0 + step * i) + '" cy="' + y + '" r="6" stroke-width="2"/>';
+    s += '<circle class="port" cx="' + x1 + '" cy="' + y + '" r="9"/>';
+    s += '<text x="' + x1 + '" y="' + (y + 30) + '" text-anchor="end">' + CITY + "</text>";
+    var sx = x0 + step * progress - 22;
+    s += '<g class="ship" style="transform: translateX(' + sx + 'px)">' +
+      '<path class="hull" d="M0 ' + (y - 2) + " L44 " + (y - 2) + " L36 " + (y + 10) + " L8 " + (y + 10) + ' Z"/>' +
+      '<path class="sail" d="M22 ' + (y - 36) + " L22 " + (y - 6) + " L40 " + (y - 6) + ' Z" stroke-width="2"/>' +
+      '<path class="sail" d="M19 ' + (y - 28) + " L19 " + (y - 6) + " L6 " + (y - 6) + ' Z" stroke-width="2"/></g>';
+    return s + "</svg>";
+  }
+  function cycleSvg(hot) {
+    var cx = 280, cy = 190, r = 120, keys = CANON;
+    var angles = [-90, -18, 54, 126, 198];
+    function pt(a, rad) { var t = a * Math.PI / 180; return [cx + rad * Math.cos(t), cy + rad * Math.sin(t)]; }
+    var s = '<svg class="cycle" viewBox="-90 0 740 380" role="img" aria-label="Ciclo do agente: percepção, memória e contexto, planejamento e raciocínio, uso de ferramentas, observação e avaliação, e de volta à percepção">';
+    s += '<defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="arrowhead" d="M0 0 L10 5 L0 10 Z"/></marker></defs>';
+    for (var i = 0; i < 5; i++) {
+      var a1 = angles[i] + 11, a2 = angles[(i + 1) % 5] - 11;
+      if (a2 < a1) a2 += 360;
+      var p1 = pt(a1, r), p2 = pt(a2, r);
+      s += '<path class="ring" d="M' + p1[0].toFixed(1) + " " + p1[1].toFixed(1) + " A" + r + " " + r + " 0 0 1 " + p2[0].toFixed(1) + " " + p2[1].toFixed(1) + '" stroke-width="2.5" marker-end="url(#ah)"/>';
+    }
+    var anchors = ["middle", "start", "start", "end", "end"];
+    var offs = [[0, -22], [18, 5], [14, 22], [-14, 22], [-18, 5]];
+    for (var j = 0; j < 5; j++) {
+      var p = pt(angles[j], r);
+      s += '<circle class="node' + (keys[j] === hot ? " hot" : "") + '" cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="10"/>';
+      s += '<text x="' + (p[0] + offs[j][0]).toFixed(1) + '" y="' + (p[1] + offs[j][1]).toFixed(1) + '" text-anchor="' + anchors[j] + '">' + STEPS[keys[j]].name + "</text>";
+    }
+    s += '<text class="center" x="' + cx + '" y="' + (cy + 8) + '" text-anchor="middle">agente</text>';
+    return s + "</svg>";
+  }
+  function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function same(a, b) { if (!a || !b || a.length !== b.length) return false; for (var i = 0; i < a.length; i++) if (a[i] !== b[i]) return false; return true; }
+  function clone(o) { return JSON.parse(JSON.stringify(o || {})); }
+  function correctCount(ans) { var c = 0; QUESTIONS.forEach(function (q) { if (ans && ans[q.id] === q.answer) c++; }); return c; }
+  function answeredCount(ans) { var c = 0; QUESTIONS.forEach(function (q) { if (ans && ans[q.id]) c++; }); return c; }
+  function pollCorrect(p) { var c = 0; POLL.forEach(function (q) { if (p && p[q.id] === q.answer) c++; }); return c; }
+  function orderOk(seq) { return same(seq, CANON) || same(seq, ALT); }
+
+  // =================== State ===================
+  var LS_KEY = "viagem-capitao-v3";
+  var app = document.getElementById("app");
+  var tabs = document.getElementById("tabs");
+  var stagesNav = document.getElementById("stages");
+
+  var rec = {};           // what gets saved for this student
+  var si = 0;             // index into STAGES
+  var view = "play";
+  var lsUid = null, lsRound = null;
+  (function loadLocal() {
+    try {
+      var raw = localStorage.getItem(LS_KEY);
+      if (raw) {
+        var o = JSON.parse(raw);
+        rec = o.rec || {};
+        si = typeof o.si === "number" ? Math.min(Math.max(o.si, 0), STAGES.length - 1) : 0;
+        lsUid = o.uid || null; lsRound = (o.round === undefined) ? null : o.round;
+      }
+    } catch (e) { /* storage unavailable */ }
+  })();
+  function persistLocal() { try { localStorage.setItem(LS_KEY, JSON.stringify({ rec: rec, si: si, uid: lsUid, round: lsRound })); } catch (e) {} }
+
+  var game, poll, storm, cyc, form;
+  function freshGame() { return { phase: "intro", i: 0, answers: {} }; }
+  function freshStorm() { return { pool: shuffle(["P", "M", "R", "F", "O", "X"]), seq: [], checks: 0, result: null }; }
+  function initStorm() {
+    var st = rec.storm || {};
+    if (st.final) return { pool: [], seq: st.final.slice(), checks: st.checks || 1, result: "revealed" };
+    return freshStorm();
+  }
+  function initAll(keepGame) {
+    if (!keepGame || !game) game = freshGame();
+    poll = { picks: clone(rec.poll), shown: !!rec.poll };
+    storm = initStorm();
+    cyc = rec.cycle || null;
+    form = { vals: clone(rec.create && rec.create.vals), sent: !!(rec.create && rec.create.sent), error: false };
+  }
+  initAll(false);
+
+  var db = null, user = null, downloads = null, uid = null, isOwner = false;
+  var canSave = false, saveFailed = false, connected = false;
+  var saveChain = Promise.resolve();
+  var votes = [], votesError = false, votesLoaded = false, unsubVotes = null;
+  var confirmReset = false, resetting = false;
+
+  function save() {
+    persistLocal();
+    if (!canSave || isOwner) return;
+    rec.updatedAt = new Date().toISOString();
+    var body = clone(rec);
+    saveChain = saveChain.then(function () { return db.doc("votes/" + uid).set(body); })
+      .catch(function () { saveFailed = true; canSave = false; if (view === "play") renderStatus(); });
+  }
+
+  function statusText() {
+    if (isOwner) return "Você é o dono desta página: suas respostas de teste não entram no painel.";
+    if (canSave && !saveFailed) return "Suas respostas vão para o painel do professor.";
+    if (connected || saveFailed) return "Suas respostas ficam só neste computador. Para enviá-las ao professor, abra o link com a sua conta do Claude.";
+    return "";
+  }
+  function renderStatus() {
+    var el = document.getElementById("status");
+    if (el) el.textContent = statusText();
+  }
+
+  // =================== Stage navigation ===================
+  function stageDone(id) {
+    if (id === "1") return !!rec.finished;
+    if (id === "2") return !!rec.poll;
+    if (id === "3") return !!(rec.storm && rec.storm.final);
+    if (id === "3.1") return !!rec.cycle;
+    return !!(rec.create && rec.create.sent);
+  }
+  function renderStages() {
+    if (view !== "play") { stagesNav.innerHTML = ""; return; }
+    stagesNav.innerHTML = "<ol>" + STAGES.map(function (s, i) {
+      var cls = stageDone(s.id) ? "done" : "";
+      return '<li><button type="button" class="' + cls + '" data-si="' + i + '"' + (i === si ? ' aria-current="step"' : "") + '><span class="n">' + s.id + '</span><span class="t">' + s.t + "</span></button></li>";
+    }).join("") + "</ol>";
+    Array.prototype.forEach.call(stagesNav.querySelectorAll("button"), function (b) {
+      b.addEventListener("click", function () { goStage(parseInt(b.getAttribute("data-si"), 10)); });
+    });
+  }
+  function goStage(i) { si = i; persistLocal(); render(); focusMain(); }
+  function nextStageBtn() {
+    var nx = STAGES[si + 1];
+    return nx ? '<button class="btn" type="button" data-next="1">Ir para a etapa ' + nx.id + "</button>" : "";
+  }
+  function restartBtn() { return '<button class="btn ghost" type="button" data-restart="1">Recomeçar esta etapa</button>'; }
+  function wireNext() {
+    Array.prototype.forEach.call(app.querySelectorAll("[data-next]"), function (b) {
+      b.addEventListener("click", function () { goStage(si + 1); });
+    });
+  }
+  function wireRestart(reset) {
+    Array.prototype.forEach.call(app.querySelectorAll("[data-restart]"), function (b) {
+      b.addEventListener("click", function () { reset(); save(); render(); focusMain(); });
+    });
+  }
+  function keepScroll() { var y = window.scrollY; render(); window.scrollTo(0, y); }
+  function footer() { return '<p class="note" id="status">' + statusText() + "</p>"; }
+
+  // =================== Stage 1 ===================
+  function renderIntro() {
+    var legend = KEYS.map(function (k) { return "<li>" + flag(k) + "<span>" + OPTIONS[k] + "</span></li>"; }).join("");
+    app.innerHTML = route(0) +
+      "<h1>A biblioteca<br>do capitão</h1>" +
+      '<p class="lead">O capitão Luís Lima Machado partiu há muito tempo rumo a ' + CITY + ". Antes de zarpar, ele leu uma super biblioteca inteira, com praticamente tudo o que se sabia no dia da partida.</p>" +
+      "<p>A biblioteca ficou no porto. Durante a viagem, ele responde de memória, com base no que leu, e desde então não leu nada novo. Agora aparecem seis problemas. Para cada um, decida se o que ele leu resolve. Cada resposta tem a sua bandeira:</p>" +
+      '<ul class="legend">' + legend + "</ul>" +
+      '<button class="btn" type="button" id="start">Começar a viagem</button>' + footer();
+    document.getElementById("start").addEventListener("click", function () { restartLibrary(); game.phase = "question"; save(); render(); focusMain(); });
+  }
+  function renderQuestion() {
+    var q = QUESTIONS[game.i], chosen = game.answers[q.id], answered = !!chosen;
+    var opts = KEYS.map(function (k) {
+      var cls = "opt", tag = "";
+      if (answered) {
+        if (k === q.answer) { cls += " right"; tag = '<span class="tag">Resposta esperada</span>'; }
+        else if (k === chosen) { cls += " wrong"; tag = '<span class="tag">Sua escolha</span>'; }
+        else cls += " faded";
+      }
+      return '<button type="button" class="' + cls + '" data-k="' + k + '"' + (answered ? " disabled" : "") + ">" + flag(k) + "<span>" + OPTIONS[k] + "</span>" + tag + "</button>";
+    }).join("");
+    var fb = "";
+    if (answered) {
+      var ok = chosen === q.answer, last = game.i === QUESTIONS.length - 1;
+      var extra = (!ok && q.notes && q.notes[chosen]) ? "<p>" + q.notes[chosen] + "</p>" : "";
+      fb = '<div class="feedback"><div class="verdict ' + (ok ? "ok" : "no") + '">' + (ok ? "Isso mesmo." : "Não exatamente.") + "</div>" + extra + "<p>" + q.boat + "</p></div>" +
+        '<div class="actions"><button class="btn" type="button" id="next">' + (last ? "Ver resultado" : "Próximo problema") + "</button></div>";
+    }
+    app.innerHTML = route(answeredCount(game.answers)) +
+      '<p class="step">Problema ' + (game.i + 1) + " de " + QUESTIONS.length + "</p><h2>" + q.text + "</h2>" +
+      '<p class="ask">O que o capitão leu resolve este problema?</p><div class="options">' + opts + "</div>" + fb;
+    Array.prototype.forEach.call(app.querySelectorAll(".opt"), function (b) {
+      b.addEventListener("click", function () {
+        if (game.answers[q.id]) return;
+        game.answers[q.id] = b.getAttribute("data-k");
+        rec.answers = clone(game.answers); rec.correct = correctCount(game.answers); rec.answered = answeredCount(game.answers); save();
+        render();
+        var n = document.getElementById("next"); if (n) n.focus();
+      });
+    });
+    var next = document.getElementById("next");
+    if (next) next.addEventListener("click", function () {
+      if (game.i < QUESTIONS.length - 1) game.i++;
+      else { game.phase = "end"; rec.finished = true; save(); }
+      render(); focusMain();
+    });
+  }
+  function renderEnd1() {
+    var c = correctCount(game.answers);
+    app.innerHTML = route(QUESTIONS.length) +
+      '<p class="score">Você acertou ' + c + " de " + QUESTIONS.length + ".</p>" +
+      "<h2>O que a leitura não resolve</h2>" +
+      '<ul class="lessons">' +
+      "<li>" + flag("C") + "<div><h3>Conhecimento congelado</h3><p>A leitura parou no dia da partida. Tudo o que veio depois fica de fora.</p></div></li>" +
+      "<li>" + flag("B") + "<div><h3>Confiança no desatualizado</h3><p>Às vezes o capitão responde com segurança algo que já mudou.</p></div></li>" +
+      "<li>" + flag("D") + "<div><h3>Saber não é fazer</h3><p>O capitão leu sobre navegação e sabe como fazer, mas ler não gira o leme.</p></div></li>" +
+      "</ul>" +
+      '<section class="boxed"><h2>O que falta para o capitão?</h2><p>Pense um pouco antes de abrir a resposta.</p>' +
+      '<div id="revealBox"><button class="btn ghost" type="button" id="reveal">Mostrar a resposta</button></div></section>' +
+      '<div class="actions">' + nextStageBtn() + restartBtn() + "</div>" + footer();
+    document.getElementById("reveal").addEventListener("click", function () {
+      var box = document.getElementById("revealBox");
+      box.innerHTML = '<p>Uma tripulação.</p><div class="crew">' +
+        "<div><h3>Um vigia</h3><p>Observa o mundo agora: o tempo, as notícias, o mar.</p></div>" +
+        "<div><h3>Um timoneiro</h3><p>Executa as ordens do capitão e move o barco.</p></div>" +
+        "</div><p>Com tripulação, o capitão deixa de apenas saber e passa a agir.</p>";
+      box.setAttribute("tabindex", "-1"); box.focus();
+    });
+    wireNext();
+    wireRestart(restartLibrary);
+  }
+
+  function restartLibrary() {
+    game = freshGame();
+    delete rec.answers; delete rec.correct; delete rec.answered; delete rec.finished;
+  }
+
+  // =================== Stage 2 ===================
+  function renderPoll() {
+    var shown = poll.shown;
+    var qs = POLL.map(function (q) {
+      var pick = poll.picks[q.id];
+      var opts = ["A", "B", "C", "D"].map(function (k) {
+        var cls = "opt", tag = "";
+        if (shown) {
+          if (k === q.answer) { cls += " right"; tag = '<span class="tag">Resposta esperada</span>'; }
+          else if (k === pick) { cls += " wrong"; tag = '<span class="tag">Sua escolha</span>'; }
+          else cls += " faded";
+        } else if (k === pick) cls += " picked";
+        return '<button type="button" class="' + cls + '" data-q="' + q.id + '" data-k="' + k + '"' + (shown ? " disabled" : ' aria-pressed="' + (k === pick) + '"') + "><span>" + q.options[k] + "</span>" + tag + "</button>";
+      }).join("");
+      return '<div class="pollq"><h3>' + q.text + '</h3><div class="options">' + opts + "</div>" +
+        (shown ? '<div class="feedback"><p>' + q.why + "</p></div>" : "") + "</div>";
+    }).join("");
+    var all = POLL.every(function (q) { return poll.picks[q.id]; });
+    var bottom;
+    if (!shown) {
+      bottom = '<div class="actions"><button class="btn" type="button" id="sendPoll"' + (all ? "" : " disabled") + ">Enviar respostas</button>" +
+        (all ? "" : '<span class="muted">Responda as três perguntas para enviar.</span>') + "</div>";
+    } else {
+      bottom = '<div class="actions">' + nextStageBtn() + restartBtn() + "</div>";
+    }
+    app.innerHTML = '<p class="step">Etapa 2</p><h2>O capitão no texto</h2>' +
+      '<div class="reading"><p>Leia o trecho da seção 1.1 indicado pelo professor no capítulo <a href="' + SBC_URL + '" target="_blank" rel="noopener">Agentes de IA: Construção de Chatbot no Paradigma Multiagente com LangChain e LangGraph</a> (SBC). Depois, ligue o barco ao texto.</p></div>' +
+      qs + bottom + footer();
+    if (!shown) {
+      Array.prototype.forEach.call(app.querySelectorAll(".opt"), function (b) {
+        b.addEventListener("click", function () {
+          poll.picks[b.getAttribute("data-q")] = b.getAttribute("data-k");
+          var y = window.scrollY; render(); window.scrollTo(0, y);
+          var again = app.querySelector('.opt[data-q="' + b.getAttribute("data-q") + '"][data-k="' + b.getAttribute("data-k") + '"]');
+          if (again) again.focus({ preventScroll: true });
+        });
+      });
+      var sp = document.getElementById("sendPoll");
+      if (sp) sp.addEventListener("click", function () {
+        poll.shown = true; rec.poll = clone(poll.picks); save();
+        keepScroll();
+      });
+    }
+    wireNext();
+    wireRestart(function () { poll = { picks: {}, shown: false }; delete rec.poll; });
+  }
+
+  // =================== Stage 3 ===================
+  function renderStorm() {
+    var seqHtml = "";
+    for (var i = 0; i < 5; i++) {
+      var id = storm.seq[i];
+      if (!id) { seqHtml += '<li class="slot"><span class="pos">' + (i + 1) + '</span><span class="txt">Escolha uma caixinha abaixo</span></li>'; continue; }
+      var cls = "slot filled";
+      if (storm.result === "partial") cls += (id === CANON[i] || (storm.altOk && id === ALT[i])) ? " good" : " badpos";
+      seqHtml += '<li class="' + cls + '"><span class="pos">' + (i + 1) + '</span><span class="txt">' + CARDS[id] + "</span>" +
+        '<span class="mini"><button type="button" data-up="' + i + '" aria-label="Subir"' + (i === 0 ? " disabled" : "") + ">\u2191</button>" +
+        '<button type="button" data-down="' + i + '" aria-label="Descer"' + (i >= storm.seq.length - 1 ? " disabled" : "") + ">\u2193</button>" +
+        '<button type="button" data-out="' + i + '" aria-label="Tirar da sequência">\u00d7</button></span></li>';
+    }
+    var full = storm.seq.length === 5;
+    var poolHtml = storm.pool.map(function (id) {
+      return '<li><button type="button" class="card" data-in="' + id + '"' + (full ? " disabled" : "") + ">" + CARDS[id] + "</button></li>";
+    }).join("");
+    var msg = "";
+    if (storm.result === "intruder") {
+      msg = '<div class="feedback"><div class="verdict no">Uma caixinha intrusa entrou na sequência.</div><p>Uma das caixinhas fala de informação velha, de antes da partida. Com o vigia a bordo, o capitão não precisa dela. Ache a intrusa, tire-a da sequência e confira de novo.</p></div>';
+    } else if (storm.result === "partial") {
+      msg = '<div class="feedback"><div class="verdict no">' + storm.goodCount + " de 5 caixinhas estão no lugar certo.</div><p>As caixinhas com fundo verde já estão certas. Ajuste as outras e confira de novo, ou veja a resposta.</p></div>";
+    }
+    app.innerHTML = '<p class="step">Etapa 3</p><h2>A tempestade</h2>' +
+      '<p class="lead">Luís segue viagem, agora com tripulação. De repente, o céu muda.</p>' +
+      "<p>Coloque os acontecimentos na ordem em que um bom capitão agiria. Atenção: uma das caixinhas não faz parte do processo.</p>" +
+      '<p class="label-sm">Sua sequência</p><ol class="seq">' + seqHtml + "</ol>" +
+      (storm.pool.length ? '<p class="label-sm">' + (full ? "Caixinha que sobrou" : "Caixinhas soltas: clique para colocar na sequência") + '</p><ul class="pool">' + poolHtml + "</ul>" : "") +
+      msg +
+      '<div class="actions"><button class="btn" type="button" id="check"' + (full ? "" : " disabled") + ">Conferir a ordem</button>" +
+      (storm.checks > 0 ? '<button class="btn ghost" type="button" id="giveup">Ver a resposta</button>' : "") +
+      (storm.seq.length || storm.checks ? restartBtn() : "") +
+      (full ? "" : '<span class="muted">Coloque cinco caixinhas na sequência.</span>') + "</div>" + footer();
+
+    function rerender(focusSel) {
+      keepScroll();
+      if (focusSel) { var f = app.querySelector(focusSel); if (f && !f.disabled) f.focus({ preventScroll: true }); }
+    }
+    Array.prototype.forEach.call(app.querySelectorAll("[data-in]"), function (b) {
+      b.addEventListener("click", function () {
+        if (storm.seq.length >= 5) return;
+        var id = b.getAttribute("data-in");
+        storm.pool = storm.pool.filter(function (x) { return x !== id; });
+        storm.seq.push(id); storm.result = null;
+        rerender(storm.seq.length < 5 ? "[data-in]" : "#check");
+      });
+    });
+    Array.prototype.forEach.call(app.querySelectorAll("[data-up]"), function (b) {
+      b.addEventListener("click", function () { var i = +b.getAttribute("data-up"); var t = storm.seq[i - 1]; storm.seq[i - 1] = storm.seq[i]; storm.seq[i] = t; storm.result = null; rerender('[data-up="' + (i - 1) + '"]'); });
+    });
+    Array.prototype.forEach.call(app.querySelectorAll("[data-down]"), function (b) {
+      b.addEventListener("click", function () { var i = +b.getAttribute("data-down"); var t = storm.seq[i + 1]; storm.seq[i + 1] = storm.seq[i]; storm.seq[i] = t; storm.result = null; rerender('[data-down="' + (i + 1) + '"]'); });
+    });
+    Array.prototype.forEach.call(app.querySelectorAll("[data-out]"), function (b) {
+      b.addEventListener("click", function () { var i = +b.getAttribute("data-out"); storm.pool.push(storm.seq[i]); storm.seq.splice(i, 1); storm.result = null; rerender("[data-in]"); });
+    });
+    var ch = document.getElementById("check");
+    if (ch) ch.addEventListener("click", checkStorm);
+    var gu = document.getElementById("giveup");
+    if (gu) gu.addEventListener("click", function () { finishStorm(false); });
+    wireRestart(restartStorm);
+  }
+  function restartStorm() { delete rec.storm; storm = freshStorm(); }
+  function checkStorm() {
+    var seq = storm.seq.slice();
+    storm.checks++;
+    if (!rec.storm) rec.storm = {};
+    if (!rec.storm.first) { rec.storm.first = seq.slice(); rec.storm.firstOk = orderOk(seq); }
+    rec.storm.checks = storm.checks;
+    if (orderOk(seq)) { finishStorm(true); return; }
+    if (seq.indexOf("X") !== -1) { storm.result = "intruder"; }
+    else {
+      var good = 0; storm.altOk = seq[0] === "M";
+      for (var i = 0; i < 5; i++) if (seq[i] === CANON[i] || (storm.altOk && seq[i] === ALT[i])) good++;
+      storm.goodCount = good; storm.result = "partial";
+    }
+    save();
+    keepScroll();
+  }
+  function finishStorm(solved) {
+    if (!rec.storm) rec.storm = {};
+    rec.storm.solved = solved;
+    rec.storm.final = storm.seq.slice();
+    rec.storm.checks = storm.checks;
+    storm.result = "revealed";
+    save();
+    render(); focusMain();
+  }
+  function renderStormEnd() {
+    var yours = (rec.storm && rec.storm.final) || storm.seq;
+    var solved = !!(rec.storm && rec.storm.solved);
+    var usedAlt = same(yours, ALT);
+    var head = solved ? '<div class="verdict ok">Isso mesmo: essa é a ordem de um agente.</div>' : '<div class="verdict no">Aqui está a ordem esperada.</div>';
+    var altNote = usedAlt ? "<p>Você colocou a memória antes da percepção. Também faz sentido: o capitão sabe muita coisa antes de qualquer aviso. Aqui começamos pelo que dispara o processo, o aviso do vigia.</p>" : "";
+    var list = CANON.map(function (k, i) {
+      var pos = yours.indexOf(k);
+      var good = solved || pos === i;
+      var where = pos === -1 ? "Você não colocou esta caixinha na sequência." : (good ? "" : "Você colocou em " + (pos + 1) + "º lugar.");
+      return '<li class="slot filled' + (good ? " good" : " badpos") + '"><span class="pos">' + (i + 1) + '</span><span class="txt">' + CARDS[k] +
+        (where ? '<br><span class="yours">' + where + "</span>" : "") + "</span></li>";
+    }).join("");
+    app.innerHTML = '<p class="step">Etapa 3</p><h2>A tempestade</h2>' + head + altNote +
+      '<ol class="seq">' + list + "</ol>" +
+      "<p>A caixinha intrusa era a lembrança da previsão do tempo que Luís leu antes de partir. Informação velha: para o tempo de agora, quem conta é o vigia.</p>" +
+      '<div class="actions">' + nextStageBtn() + restartBtn() + "</div>" + footer();
+    wireNext();
+    wireRestart(restartStorm);
+  }
+
+  // =================== Stage 3.1 ===================
+  function renderCycle() {
+    var c = cyc;
+    var list = CANON.map(function (k, i) {
+      return '<li><span class="num">' + (i + 1) + '</span><span class="name">' + STEPS[k].name + "</span><span>" + STEPS[k].what + '</span><span class="boat">Na tempestade: ' + CARDS[k] + "</span></li>";
+    }).join("");
+    var opts = CYCLE_OPTS.map(function (k) {
+      var cls = "opt", tag = "";
+      if (c) {
+        if (k === c) { cls += k === CYCLE_ANSWER ? " right" : " wrong"; tag = '<span class="tag">' + (k === CYCLE_ANSWER ? "Certa" : "Errada") + "</span>"; }
+        else cls += " faded";
+      }
+      return '<button type="button" class="' + cls + '" data-cy="' + k + '"' + (c ? " disabled" : "") + "><span>" + STEPS[k].name + "</span>" + tag + "</button>";
+    }).join("");
+    var fb = "";
+    if (c) {
+      fb = '<div class="feedback"><div class="verdict ' + (c === CYCLE_ANSWER ? "ok" : "no") + '" style="margin:0">' + (c === CYCLE_ANSWER ? "Resposta certa." : "Resposta errada.") + "</div></div>" +
+        '<div class="actions">' + nextStageBtn() + restartBtn() + "</div>";
+    }
+    app.innerHTML = '<p class="step">Etapa 3.1</p><h2>O ciclo do agente</h2>' +
+      cycleSvg(null) +
+      "<p>Cada acontecimento da tempestade corresponde a uma etapa do ciclo de um agente de IA.</p>" +
+      '<ol class="steps">' + list + "</ol>" +
+      '<section class="boxed"><h2>Mas a viagem não acabou</h2>' +
+      "<p>Uma hora depois, o vigia avisa: no novo rumo, as ondas estão ainda maiores. Para qual etapa o Luís deve voltar?</p>" +
+      '<div class="options">' + opts + "</div>" + fb + "</section>" + footer();
+    Array.prototype.forEach.call(app.querySelectorAll("[data-cy]"), function (b) {
+      b.addEventListener("click", function () {
+        cyc = b.getAttribute("data-cy");
+        rec.cycle = cyc; save();
+        keepScroll();
+      });
+    });
+    wireNext();
+    wireRestart(function () { cyc = null; delete rec.cycle; });
+  }
+
+  // =================== Stage 4 ===================
+  function renderFamily() {
+    var items = FIELDS.filter(function (f) { return f.k !== "prof"; }).map(function (f) {
+      return "<dt>" + (f.short || f.label) + "</dt><dd>" + f.hint + "</dd>";
+    }).join("");
+    app.innerHTML = '<p class="step">Etapa 4</p><h2>A família Lima Machado</h2>' +
+      '<p class="lead">Luís tem dois irmãos, Leandro e Larissa. Como ele, os dois leram muito e planejam muito bem. E, como ele, dependem de outras pessoas e coisas para agir no próprio trabalho.</p>' +
+      '<div class="example"><h3>Leandro é administrador de um restaurante</h3><p class="muted">Ele planeja e decide, mas quem percebe e age são outras pessoas. Veja como ficaria a tripulação dele.</p><dl>' +
+      "<dt>Não consegue sozinho</dt><dd>Saber o que tem no estoque hoje, saber o que os clientes estão pedindo e achando, preparar os pratos e atender as mesas.</dd>" +
+      "<dt>Sensores</dt><dd>O estoquista que confere a despensa, os garçons que trazem os pedidos e as reclamações, o sistema de reservas, o relatório do caixa.</dd>" +
+      "<dt>Atuadores</dt><dd>O chef e os cozinheiros, os garçons que servem, o comprador que faz os pedidos aos fornecedores.</dd>" +
+      "<dt>Memória</dt><dd>O caderno de gestão, com o histórico de vendas, as preferências dos clientes frequentes e os contatos dos fornecedores.</dd>" +
+      "<dt>Um ciclo</dt><dd>O estoquista avisa que o tomate acabou no meio do jantar. Leandro consulta o caderno: o fornecedor só entrega amanhã, mas um mercado parceiro fica aberto até as 22h. Ele decide comprar lá e, enquanto isso, tirar o prato do dia do cardápio. O comprador vai ao mercado, o chef ajusta o cardápio e os garçons avisam as mesas. Os garçons contam como os clientes reagiram, e Leandro avalia se a solução funcionou.</dd>" +
+      "</dl></div>" +
+      "<h2>Agora é com você</h2>" +
+      "<p>Escolha a profissão da Larissa e publique um cartão no mural da turma. Como o Leandro, ela planeja e decide, mas depende de outras pessoas para perceber e agir. Algumas ideias: administradora de hospital, administradora de eventos. Use a profissão como título do cartão.</p>" +
+      "<p>No texto do cartão, escreva só um destes itens ou quantos quiser:</p>" +
+      '<div class="example roteiro"><dl>' + items + "</dl></div>" +
+      '<div class="actions"><a class="btn" href="' + MURAL_URL + '" target="_blank" rel="noopener">Abrir o mural da turma</a>' +
+      '<button class="btn ghost" type="button" id="posted">Já publiquei no mural</button>' + (form.sent ? restartBtn() : "") + "</div>" +
+      '<p class="note">Se o botão não abrir o mural, copie este endereço no navegador: <span class="url">' + MURAL_URL + "</span></p>" +
+      '<div id="finale"></div>' + footer();
+    document.getElementById("posted").addEventListener("click", function () {
+      form.sent = true; rec.create = { sent: true }; save();
+      var y = window.scrollY; render(); window.scrollTo(0, y);
+      showFinale(true);
+    });
+    if (form.sent) showFinale(false);
+    wireRestart(function () { form = { vals: {}, sent: false, error: false }; delete rec.create; });
+  }
+  function showFinale(focus) {
+    var box = document.getElementById("finale");
+    if (!box) return;
+    box.innerHTML = '<p class="note" role="status">Pronto. Agora acompanhe o mural com a turma.</p>';
+    if (focus) { box.setAttribute("tabindex", "-1"); box.focus(); }
+  }
+
+  // =================== Teacher panel ===================
+  function bar(label, count, total, expected, flagKey) {
+    var pct = total ? Math.round(count * 100 / total) : 0;
+    return '<div class="barrow' + (flagKey ? " withflag" : "") + (expected ? " expected" : "") + '">' + (flagKey ? flag(flagKey) : "") +
+      '<span class="label">' + label + (expected ? " (esperada)" : "") + '</span><div class="track"><div class="fill" style="width:' + pct + '%"></div></div>' +
+      '<span class="count">' + count + " (" + pct + "%)</span></div>";
+  }
+  function plural(n, one, many) { return n + " " + (n === 1 ? one : many); }
+  var panelMsg = "";
+  function renderPanel() {
+    var head = "<h2>Painel da turma</h2>";
+    if (!db) { app.innerHTML = head + "<p>O painel não conseguiu se conectar às respostas nesta visualização. Abra a página pelo Claude, com a sua conta, para ver os resultados.</p>"; return; }
+    if (votesError) { app.innerHTML = head + "<p>A conexão com as respostas foi interrompida. Recarregue a página para tentar de novo.</p>"; return; }
+    if (!votesLoaded) { app.innerHTML = head + '<p class="muted">Carregando respostas…</p>'; return; }
+    var access = '<p class="note">Para os votos chegarem aqui, cada aluno precisa abrir o link com a conta do Claude e ter acesso de Colaborador (ou ser da mesma organização que você).</p>';
+    var list = votes.filter(function (v) { return v && typeof v === "object"; });
+    var msg = panelMsg ? '<p class="note" role="status">' + panelMsg + "</p>" : "";
+    if (!list.length) { app.innerHTML = head + msg + "<p>Ainda não há respostas desta turma. Compartilhe o link desta página; os votos aparecem aqui assim que cada aluno responder.</p>" + access; return; }
+
+    var s1 = list.filter(function (v) { return v.answers; });
+    var s1done = s1.filter(function (v) { return v.finished; });
+    var s2 = list.filter(function (v) { return v.poll; });
+    var s3 = list.filter(function (v) { return v.storm && v.storm.first; });
+    var s3done = list.filter(function (v) { return v.storm && v.storm.final; });
+    var s31 = list.filter(function (v) { return v.cycle; });
+    var s4 = list.filter(function (v) { return v.create && v.create.sent; });
+
+    var summary = '<p class="summary">' + plural(list.length, "aluno entrou", "alunos entraram") + ". Concluíram a etapa 1: " + s1done.length + "; a 2: " + s2.length + "; a 3: " + s3done.length + "; a 3.1: " + s31.length + "; a 4: " + s4.length + ".</p>" +
+      '<p class="muted" style="font-size:.95rem">Quem recomeça uma etapa substitui a resposta anterior: cada aluno aparece uma vez, com a tentativa mais recente.</p>';
+    var nav = '<div class="panelnav"><a href="#p1">1. Biblioteca</a><a href="#p2">2. Enquete</a><a href="#p3">3. Tempestade</a><a href="#p31">3.1. Ciclo</a><a href="#p4">4. Família</a><a href="#palunos">Alunos</a></div>';
+
+    var avg = s1done.length ? s1done.reduce(function (s, v) { return s + correctCount(v.answers); }, 0) / s1done.length : null;
+    var p1 = '<section class="psec" id="p1"><h2>1. A biblioteca do capitão</h2><p>' + plural(s1.length, "aluno começou", "alunos começaram") + " e " + s1done.length + (s1done.length === 1 ? " terminou." : " terminaram.") +
+      (avg !== null ? " Média de acertos: " + avg.toFixed(1).replace(".", ",") + " de " + QUESTIONS.length + "." : "") + "</p>" +
+      QUESTIONS.map(function (q, idx) {
+        var counts = { A: 0, B: 0, C: 0, D: 0 }, total = 0;
+        s1.forEach(function (v) { var a = v.answers[q.id]; if (counts.hasOwnProperty(a)) { counts[a]++; total++; } });
+        return '<div class="qblock"><h3>' + (idx + 1) + ". " + q.text + '</h3><div class="muted" style="font-size:.95rem">' + plural(total, "resposta", "respostas") + '</div><div class="bars">' +
+          KEYS.map(function (k) { return bar(OPTIONS[k], counts[k], total, k === q.answer, k); }).join("") + "</div></div>";
+      }).join("") + "</section>";
+
+    var p2 = '<section class="psec" id="p2"><h2>2. O capitão no texto</h2><p>' + plural(s2.length, "aluno respondeu", "alunos responderam") + ".</p>" +
+      POLL.map(function (q) {
+        var counts = { A: 0, B: 0, C: 0, D: 0 }, total = 0;
+        s2.forEach(function (v) { var a = v.poll[q.id]; if (counts.hasOwnProperty(a)) { counts[a]++; total++; } });
+        return '<div class="qblock"><h3>' + q.text + '</h3><div class="bars">' +
+          ["A", "B", "C", "D"].map(function (k) { return bar(q.options[k], counts[k], total, k === q.answer); }).join("") + "</div></div>";
+      }).join("") + "</section>";
+
+    var firstOk = s3.filter(function (v) { return v.storm.firstOk; }).length;
+    var withX = s3.filter(function (v) { return v.storm.first.indexOf("X") !== -1; }).length;
+    var posBlock = '<div class="qblock"><h3>Na primeira tentativa, quantos colocaram cada caixinha no lugar certo</h3><div class="bars">' +
+      CANON.map(function (k, i) {
+        var n = s3.filter(function (v) { var f = v.storm.first; if (i < 2 && f[0] === "M" && f[1] === "P") return true; return f[i] === k; }).length;
+        return bar((i + 1) + ". " + STEPS[k].name, n, s3.length, true);
+      }).join("") + bar("Incluíram a caixinha intrusa", withX, s3.length, false) + "</div></div>";
+    var p3 = '<section class="psec" id="p3"><h2>3. A tempestade</h2><p>' + plural(s3.length, "aluno conferiu", "alunos conferiram") + " a ordem. " + firstOk + " acertaram na primeira tentativa.</p>" + posBlock + "</section>";
+
+    var cycCounts = {}; CYCLE_OPTS.forEach(function (k) { cycCounts[k] = 0; });
+    s31.forEach(function (v) { if (cycCounts.hasOwnProperty(v.cycle)) cycCounts[v.cycle]++; });
+    var p31 = '<section class="psec" id="p31"><h2>3.1. O ciclo do agente</h2><div class="qblock"><h3>As ondas aumentaram: para qual etapa o Luís deve voltar?</h3><div class="bars">' +
+      CYCLE_OPTS.map(function (k) { return bar(STEPS[k].name, cycCounts[k], s31.length, k === CYCLE_ANSWER); }).join("") + "</div></div></section>";
+
+    var p4 = '<section class="psec" id="p4"><h2>4. A família Lima Machado</h2><p>' + plural(s4.length, "aluno avisou", "alunos avisaram") + ' que publicou no mural. As tripulações ficam no <a href="' + MURAL_URL + '" target="_blank" rel="noopener">mural da turma no Padlet</a>.</p></section>';
+
+    var sorted = list.slice().sort(function (a, b) { return (b.updatedAt || "").localeCompare(a.updatedAt || ""); });
+    var rows = sorted.map(function (v) {
+      var e1 = v.answers ? correctCount(v.answers) + " de " + QUESTIONS.length + (v.finished ? "" : " (em andamento)") : "\u2013";
+      var e2 = v.poll ? pollCorrect(v.poll) + " de 3" : "\u2013";
+      var e3 = v.storm && v.storm.first ? (v.storm.firstOk ? "Acertou de primeira" : (v.storm.solved ? "Acertou depois" : (v.storm.final ? "Viu a resposta" : "Em andamento"))) : "\u2013";
+      var e31 = v.cycle ? (v.cycle === CYCLE_ANSWER ? "Acertou" : STEPS[v.cycle].name) : "\u2013";
+      var e4 = v.create && v.create.sent ? "Publicou" : "\u2013";
+      return '<tr><td data-uid="' + v.id + '">Aluno</td><td>' + e1 + "</td><td>" + e2 + "</td><td>" + e3 + "</td><td>" + e31 + "</td><td>" + e4 + "</td></tr>";
+    }).join("");
+    var table = '<section class="psec" id="palunos"><h2>Alunos</h2><div class="tablewrap"><table><thead><tr><th>Aluno</th><th>1. Biblioteca</th><th>2. Enquete</th><th>3. Tempestade</th><th>3.1. Ciclo</th><th>4. Família</th></tr></thead><tbody>' + rows + "</tbody></table></div></section>";
+
+    var tools = '<section class="psec" id="pturma"><h2>Nova turma</h2>' +
+      "<p>Antes de dar a aula para outra turma, baixe as respostas desta (se quiser guardá-las) e depois apague. Apagar limpa o painel e faz o jogo recomeçar do zero para quem abrir o link de novo.</p>" + msg +
+      '<div class="actions">' +
+      (downloads ? '<button class="btn ghost" type="button" id="csv">Baixar respostas (CSV)</button>' : "") +
+      (resetting ? '<button class="btn danger" type="button" disabled>Apagando…</button>'
+        : (confirmReset ? '<button class="btn danger" type="button" id="resetYes">Confirmar: apagar todas as respostas</button><button class="btn ghost" type="button" id="resetNo">Cancelar</button>'
+          : '<button class="btn danger" type="button" id="reset">Apagar respostas e começar nova turma</button>')) +
+      "</div></section>";
+
+    app.innerHTML = head + summary + nav + p1 + p2 + p3 + p31 + p4 + table + access + tools;
+
+    fillNames(sorted.map(function (v) { return v.id; }));
+
+    var r = document.getElementById("reset");
+    if (r) r.addEventListener("click", function () { confirmReset = true; panelMsg = ""; renderPanel(); var y = document.getElementById("resetYes"); if (y) y.focus(); });
+    var no = document.getElementById("resetNo");
+    if (no) no.addEventListener("click", function () { confirmReset = false; renderPanel(); });
+    var yes = document.getElementById("resetYes");
+    if (yes) yes.addEventListener("click", resetAll);
+    var cs = document.getElementById("csv");
+    if (cs) cs.addEventListener("click", exportCsv);
+  }
+  function fillNames(ids) {
+    var order = {}; ids.forEach(function (id, i) { order[id] = i + 1; });
+    function draw(ps) {
+      Array.prototype.forEach.call(app.querySelectorAll("[data-uid]"), function (el) {
+        var id = el.getAttribute("data-uid"), p = ps && ps[id];
+        el.textContent = (p && p.name) || ("Aluno " + (order[id] || ""));
+      });
+    }
+    draw(null);
+    if (user && ids.length) user.profiles(ids).then(function (ps) { if (view === "panel") draw(ps); });
+  }
+  function csvCell(v) { v = v === undefined || v === null ? "" : String(v); return '"' + v.replace(/"/g, '""') + '"'; }
+  function exportCsv() {
+    var list = votes.slice();
+    var ids = list.map(function (v) { return v.id; });
+    var getNames = (user && ids.length) ? user.profiles(ids) : Promise.resolve({});
+    getNames.then(function (ps) {
+      var header = ["Aluno", "Biblioteca: acertos"]
+        .concat(QUESTIONS.map(function (q, i) { return "Biblioteca " + (i + 1); }))
+        .concat(["Enquete: acertos"]).concat(POLL.map(function (q, i) { return "Enquete " + (i + 1); }))
+        .concat(["Tempestade: primeira tentativa", "Tempestade: acertou de primeira", "Tempestade: ordem final", "Ciclo: voltar para"])
+        .concat(["Família: publicou no mural"])
+        .concat(["Última atualização"]);
+      function names(seq) { return (seq || []).map(function (k) { return k === "X" ? "Intrusa" : STEPS[k].name; }).join(" > "); }
+      var lines = [header.map(csvCell).join(";")];
+      list.forEach(function (v, i) {
+        var p = ps && ps[v.id];
+        var row = [(p && p.name) || ("Aluno " + (i + 1)), v.answers ? correctCount(v.answers) : ""]
+          .concat(QUESTIONS.map(function (q) { var a = v.answers && v.answers[q.id]; return a ? OPTIONS[a] : ""; }))
+          .concat([v.poll ? pollCorrect(v.poll) : ""]).concat(POLL.map(function (q) { var a = v.poll && v.poll[q.id]; return a ? q.options[a] : ""; }))
+          .concat([v.storm ? names(v.storm.first) : "", v.storm && v.storm.first ? (v.storm.firstOk ? "Sim" : "Não") : "", v.storm ? names(v.storm.final) : "", v.cycle ? STEPS[v.cycle].name : ""])
+          .concat([v.create && v.create.sent ? "Sim" : ""])
+          .concat([v.updatedAt || ""]);
+        lines.push(row.map(csvCell).join(";"));
+      });
+      var stamp = new Date().toISOString().slice(0, 10);
+      return downloads.save({ filename: "respostas-viagem-do-capitao-" + stamp + ".csv", data: "\ufeff" + lines.join("\r\n") });
+    }).then(function () { panelMsg = "Arquivo baixado."; if (view === "panel") renderPanel(); })
+      .catch(function (e) {
+        if (e && e.code === "declined") return;
+        panelMsg = "Não foi possível baixar o arquivo nesta visualização.";
+        if (view === "panel") renderPanel();
+      });
+  }
+  function resetAll() {
+    resetting = true; renderPanel();
+    var chain = Promise.resolve();
+    votes.map(function (v) { return v.id; }).forEach(function (id) { chain = chain.then(function () { return db.doc("votes/" + id).delete(); }); });
+    var failed = false;
+    chain.catch(function () { failed = true; }).then(function () {
+      var newRound = Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+      return db.doc("config/round").set({ id: newRound, startedAt: new Date().toISOString() }).catch(function () { failed = true; });
+    }).then(function () {
+      resetting = false; confirmReset = false;
+      panelMsg = failed ? "Algumas respostas não foram apagadas. Tente de novo." : "Respostas apagadas. O jogo está pronto para a próxima turma.";
+      if (view === "panel") renderPanel();
+    });
+  }
+  function subscribeVotes() {
+    if (unsubVotes || !db) return;
+    unsubVotes = db.collection("votes").onSnapshot(function (snap) {
+      votesLoaded = true;
+      votes = snap.docs.map(function (d) { return Object.assign({ id: d.id }, d.data() || {}); });
+      if (view === "panel" && !resetting && !confirmReset) renderPanel();
+    }, function () { votesError = true; if (view === "panel") renderPanel(); });
+  }
+
+  // =================== Routing ===================
+  function render() {
+    renderStages();
+    if (view === "panel") { renderPanel(); return; }
+    var id = STAGES[si].id;
+    if (id === "1") {
+      if (game.phase === "intro") renderIntro();
+      else if (game.phase === "question") renderQuestion();
+      else renderEnd1();
+    } else if (id === "2") renderPoll();
+    else if (id === "3") { if (storm.result === "revealed") renderStormEnd(); else renderStorm(); }
+    else if (id === "3.1") renderCycle();
+    else renderFamily();
+  }
+  function focusMain() {
+    var h = app.querySelector("h1, h2");
+    if (h) { h.setAttribute("tabindex", "-1"); h.focus({ preventScroll: true }); }
+    window.scrollTo(0, 0);
+  }
+  Array.prototype.forEach.call(tabs.querySelectorAll("button"), function (b) {
+    b.addEventListener("click", function () {
+      view = b.getAttribute("data-view");
+      Array.prototype.forEach.call(tabs.querySelectorAll("button"), function (o) { o.setAttribute("aria-pressed", o === b ? "true" : "false"); });
+      render(); window.scrollTo(0, 0);
+    });
+  });
+
+  render();
+
+  // =================== Capabilities ===================
+  if (window.claude && typeof window.claude.use === "function") {
+    Promise.all([window.claude.use("db"), window.claude.use("user"), window.claude.use("downloads")]).then(function (res) {
+      db = res[0]; user = res[1]; downloads = res[2]; connected = true;
+      if (!user) return null;
+      return Promise.all([user.isOwner(), user.id()]).then(function (r) {
+        isOwner = !!r[0]; uid = r[1];
+        var roundP = db ? db.doc("config/round").get().then(function (s) { return s.exists ? String((s.data() || {}).id || "") : ""; }).catch(function () { return null; }) : Promise.resolve(null);
+        return roundP.then(function (round) {
+          // Another person on this computer, or a new class since this progress was saved: start fresh.
+          var otherPerson = uid && lsUid && lsUid !== uid;
+          var newClass = round !== null && lsRound !== null && lsRound !== round;
+          if (otherPerson || newClass) { rec = {}; si = 0; game = null; initAll(false); }
+          if (uid) lsUid = uid;
+          if (round !== null) lsRound = round;
+          persistLocal();
+          if (isOwner) { tabs.classList.add("on"); if (db) subscribeVotes(); return null; }
+          if (!db || !uid) return null;
+          return db.doc("votes/" + uid).get().then(function (snap) {
+            var remote = snap.exists ? (snap.data() || {}) : null;
+            if (remote) {
+              var merged = clone(remote);
+              Object.keys(rec).forEach(function (k) { if (merged[k] === undefined) merged[k] = rec[k]; });
+              rec = merged;
+              initAll(true);
+            }
+            canSave = true;
+            if (Object.keys(rec).length) save();
+          }).catch(function () { canSave = true; });
+        });
+      });
+    }).catch(function () { connected = true; }).then(function () {
+      var typing = document.activeElement && document.activeElement.tagName === "TEXTAREA";
+      if (!typing) keepScroll(); else renderStatus();
+    });
+  }
+})();
+</script>
+</body>
+</html>
